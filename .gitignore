@@ -25,9 +25,7 @@ wheels/
 .installed.cfg
 *.egg
 
-# IDE
-.vscode/
-.idea/
+# Editor swap files
 *.swp
 *.swo
 *~
