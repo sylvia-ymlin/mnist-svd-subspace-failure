@@ -2,7 +2,7 @@
 Experiment 1: Accuracy vs rank k + saturation rank per digit.
 
 Run from repo root:
-    python experiments/01_accuracy_vs_k.py
+    python experiments/01_accuracy_curve.py
 
 Output: figures/accuracy_vs_k.png
 """

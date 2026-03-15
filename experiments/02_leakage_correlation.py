@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from scipy.stats import pearsonr
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from src.data_loader import get_filtered_mnist, get_flat_numpy_arrays
 from src.plotting import set_plot_theme, save_figure

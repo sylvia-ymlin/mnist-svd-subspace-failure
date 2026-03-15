@@ -57,3 +57,7 @@ data/
 
 # Models
 models/
+
+# Internal planning docs
+doc.md
+interview_notes.md
