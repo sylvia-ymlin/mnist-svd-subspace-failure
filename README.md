@@ -36,7 +36,7 @@ Geometric Interpretation: The classifier assigns each test image to the subspace
 
 Decomposing the training data ($X \in \mathbb{R}^{784 \times 400}$) via SVD reveals how variance distributes across directions, with faster decay indicating lower intrinsic dimensionality. 
 
-As shown in Figure 1 and the table below, structural complexity varies by class. Digit "1" is the simplest ($k_{90\text{%}} = 8$), owing to its consistent shape. In contrast, digit "5" is the most complex ($k_{90\text{%}} = 33$), reflecting higher within-class variation. Optimal rank typically sits near this 90% variance threshold, capturing dominant structure while ignoring noise (§3.1).
+As shown in Figure 1 and the table below, structural complexity varies by class. Digit "1" is the simplest ($k_{90\text{%}} = 8$), owing to its consistent shape. In contrast, digit "5" is the most complex ($k_{90\text{%}} = 33$), reflecting higher within-class variation. Optimal rank typically sits near this 90% variance threshold, capturing dominant structure while ignoring noise (§3, Subspace Stability).
 
 <div align="center">
 <img src="figures/singular_value_decay.png" width="400">
@@ -67,7 +67,7 @@ The basis vectors $u_j$ (columns of $U$) provide an orthonormal basis for the cl
 
 ## 3. Rank Selection and Subspace Stability
 
-Subspace rank $k$ defines the number of basis vectors per class. Figure 3 evaluates testing accuracy on 10,000 images across $k \in [1, 50]$. Accuracy peaks at 95.36% ($k = 22$) before declining, as high-rank directions capture sample-specific noise rather than stable class structure (§3.1). This result is consistent with Figure 1: the discriminative signal for each digit is concentrated in its low-rank directions.
+Subspace rank $k$ defines the number of basis vectors per class. Figure 3 evaluates testing accuracy on 10,000 images across $k \in [1, 50]$. Accuracy peaks at 95.36% ($k = 22$) before declining, as high-rank directions capture sample-specific noise rather than stable class structure (§3, Subspace Stability). This result is consistent with Figure 1: the discriminative signal for each digit is concentrated in its low-rank directions.
 
 <div align="center">
 <img src="figures/accuracy_vs_rank.png" width="400">
@@ -111,7 +111,7 @@ Figure 6 shows the normalized confusion matrix at $k = 22$. The three largest of
 **Figure 6.** Normalized confusion matrix at $k = 22$.
 </div>
 
-Errors are structured rather than random, with specific digit pairs consistently confused. For instance, the 8→1 confusion occurs despite visual dissimilarity, suggesting a non-pixel-level geometric cause (§6).
+Errors are structured rather than random, with specific digit pairs consistently confused. For instance, the 8→1 confusion occurs despite visual dissimilarity, suggesting a non-pixel-level geometric cause (§5).
 
 
 ## 5. Subspace Geometry Between Digit Classes
