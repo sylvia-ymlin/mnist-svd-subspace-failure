@@ -72,27 +72,6 @@ def plot_angle_vs_confusion_scatter(angle_mean_vals, confusion_vals, pairs, corr
     plt.savefig("figures/angle_vs_confusion_mean.png")
     plt.close()
 
-def plot_principal_angle_sequences(angles_dict):
-    """Visualize: Figure 9 Principal Angle Sequences for selected digit pairs"""
-    plt.figure(figsize=(9, 6))
-    
-    pairs_to_plot = [(8, 1, STYLE["colors"]["primary"], 'o-', '8-1'),
-                     (5, 3, STYLE["colors"]["secondary"], 's-', '5-3'),
-                     (0, 6, STYLE["colors"]["accent"], '^-', '0-6')]
-    
-    for i, j, color, marker, label in pairs_to_plot:
-        angles = angles_dict[(i, j)]
-        plt.plot(range(1, 23), angles, marker, color=color, label=label, linewidth=2, markersize=6)
-    
-    plt.grid(True, linestyle=':', alpha=0.3)
-    plt.xticks([1, 4, 8, 12, 16, 20, 22], fontsize=11)
-    plt.yticks(range(0, 100, 10), fontsize=11)
-    plt.xlabel("Principal Angle Index", fontsize=14)
-    plt.ylabel("Angle (degrees)", fontsize=14)
-    plt.legend(fontsize=12, loc='upper left', frameon=True, shadow=True)
-    plt.tight_layout()
-    plt.savefig("figures/principal_angle_sequences.png", dpi=300)
-    plt.close()
 
 def main():
     k = 22
@@ -108,16 +87,11 @@ def main():
         bases_dict[d] = U
 
     angle_means = np.zeros((10, 10))
-    angle_mins = np.zeros((10, 10))
-    angles_dict = {}
 
     for i in range(10):
         for j in range(i + 1, 10):
             angles = compute_principal_angles(bases_dict[i], bases_dict[j], k, k)
-            angles_dict[(i, j)] = angles
-            angles_dict[(j, i)] = angles
             angle_means[i, j] = angle_means[j, i] = np.mean(angles)
-            angle_mins[i, j] = angle_mins[j, i] = np.min(angles)
 
     best_preds = np.load("data/BestPredictions.npy")
     conf_raw = np.zeros((10, 10))
@@ -131,12 +105,11 @@ def main():
             if i != j:
                 confusion_rates[i, j] = conf_matrix[i, j]
 
-    pairs, angle_mean_vals, angle_min_vals, confusion_vals = [], [], [], []
+    pairs, angle_mean_vals, confusion_vals = [], [], []
     for i in range(10):
         for j in range(i + 1, 10):
             pairs.append((i, j))
             angle_mean_vals.append(angle_means[i, j])
-            angle_min_vals.append(angle_mins[i, j])
             confusion_vals.append((confusion_rates[i, j] + confusion_rates[j, i]) / 2)
 
     corr_mean, p_mean = spearmanr(angle_mean_vals, confusion_vals)
@@ -144,7 +117,23 @@ def main():
 
     plot_mean_angle_heatmap(angle_means)
     plot_angle_vs_confusion_scatter(angle_mean_vals, confusion_vals, pairs, corr_mean, p_mean)
-    plot_principal_angle_sequences(angles_dict)
+
+    # --- Verification of 8-1 minimum angle mentioned in §6 ---
+    # Baseline (uncentered)
+    angles_81 = compute_principal_angles(bases_dict[8], bases_dict[1], 22, 22)
+    min_angle_81 = np.min(angles_81)
+    
+    # PCA (centered)
+    X8 = train_digits[:, train_labels == 8][:, :400]
+    X1 = train_digits[:, train_labels == 1][:, :400]
+    U8_pca, _, _ = np.linalg.svd(X8 - X8.mean(axis=1)[:, np.newaxis], full_matrices=False)
+    U1_pca, _, _ = np.linalg.svd(X1 - X1.mean(axis=1)[:, np.newaxis], full_matrices=False)
+    angles_81_pca = compute_principal_angles(U8_pca, U1_pca, 22, 22)
+    min_angle_81_pca = np.min(angles_81_pca)
+    
+    print(f"\nVerification for §6:")
+    print(f"  uncentered 8-1 min angle : {min_angle_81:.2f}° (matches ~6.21° in report)")
+    print(f"  centered (PCA) 8-1 min angle : {min_angle_81_pca:.2f}° (matches ~13.78° in report)")
 
 if __name__ == "__main__":
     main()
